@@ -1,0 +1,17 @@
+{% extends 'layout.html' %}
+{% block content %}
+<h1>Вход</h1>
+<form method="POST">
+    {{ form.hidden_tag() }}
+    <div>
+        {{ form.login.label }} {{ form.login() }}
+    </div>
+    <div>
+        {{ form.password.label }} {{ form.password() }}
+    </div>
+    <div>
+        {{ form.submit() }}
+    </div>
+    {% if error_message %}<p style="color:red">{{ error_message }}</p>{% endif %}
+</form>
+{% endblock %}

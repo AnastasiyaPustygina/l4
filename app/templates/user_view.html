@@ -1,0 +1,10 @@
+{% extends 'layout.html' %}
+{% block content %}
+<h1>Просмотр пользователя</h1>
+<p><strong>Логин:</strong> {{ user.username }}</p>
+<p><strong>Имя:</strong> {{ user.first_name }}</p>
+<p><strong>Фамилия:</strong> {{ user.last_name }}</p>
+<p><strong>Отчество:</strong> {{ user.middle_name }}</p>
+<p><strong>Роль:</strong> {{ user.role.name }}</p>
+<a href="{{ url_for('user.edit_user', user_id=user.id) }}">Редактировать</a>
+{% endblock %}

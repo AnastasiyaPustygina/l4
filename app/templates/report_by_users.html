@@ -1,0 +1,18 @@
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>№</th>
+      <th>Пользователь</th>
+      <th>Количество посещений</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for name, count in stats %}
+    <tr>
+      <td>{{ loop.index }}</td>
+      <td>{{ name if name else 'Неаутентифицированный пользователь' }}</td>
+      <td>{{ count }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>

@@ -1,0 +1,91 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<h1>Список пользователей</h1>
+
+{% if current_user.role.name == 'admin' %}
+    <a href="{{ url_for('user.create_user') }}" class="btn btn-success mb-3">Создать пользователя</a>
+{% endif %}
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+    <tr>
+        <th>Логин</th>
+        <th>Имя</th>
+        <th>Фамилия</th>
+        <th>Отчество</th>
+        <th>Роль</th>
+        <th>Действия</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for user in users %}
+    <tr>
+        <td>{{ user.username }}</td>
+        <td>{{ user.first_name }}</td>
+        <td>{{ user.last_name }}</td>
+        <td>{{ user.middle_name }}</td>
+        <td>{{ user.role.name }}</td>
+        <td>
+            {% if current_user.role.name == 'admin' or current_user.id == user.id %}
+                <a href="{{ url_for('user.view_user', user_id=user.id) }}" class="btn btn-primary btn-sm">Просмотр</a>
+                <a href="{{ url_for('user.edit_user', user_id=user.id) }}" class="btn btn-warning btn-sm">Редактировать</a>
+            {% endif %}
+
+            {% if current_user.role.name == 'admin' %}
+                <button type="button"
+                        class="btn btn-danger btn-sm"
+                        data-bs-toggle="modal"
+                        data-bs-target="#confirmDeleteModal"
+                        data-user-id="{{ user.id }}"
+                        data-username="{{ user.username }}">
+                    Удалить
+                </button>
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+{% if current_user.role.name == 'admin' %}
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="POST" id="deleteUserForm">
+                {{ form.hidden_tag() }}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmDeleteModalLabel">Подтверждение удаления</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body">
+                    Вы уверены, что хотите удалить пользователя <strong id="deleteUsername"></strong>?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="submit" class="btn btn-danger" id="confirmDeleteBtn">Удалить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const modal = document.getElementById('confirmDeleteModal');
+    modal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+        const userId = button.getAttribute('data-user-id');
+        const username = button.getAttribute('data-username');
+
+        const form = document.getElementById('deleteUserForm');
+        const deleteUsername = document.getElementById('deleteUsername');
+        deleteUsername.textContent = username;
+
+        form.action = '/user/' + userId + '/delete';
+    });
+</script>
+{% endblock %}

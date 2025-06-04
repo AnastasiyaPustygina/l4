@@ -1,0 +1,49 @@
+    version: '3.7'
+
+    services:
+      db:
+        image: postgres:13
+        environment:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: user_manager_db
+        ports:
+          - "5432:5432"
+        volumes:
+          - postgres_data:/var/lib/postgresql/data
+        networks:
+          - user_manager_network
+
+      db_test:
+        image: postgres:13
+        environment:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test_db
+          LC_ALL: en_US.UTF-8
+        ports:
+          - "5433:5432"
+        volumes:
+          - postgres_test_data:/var/lib/postgresql/data/5/
+        networks:
+          - user_manager_network
+
+      web:
+        build: .
+        command: flask run --host=0.0.0.0 --port=5000
+        volumes:
+          - .:/app
+        ports:
+          - "5000:5000"
+        depends_on:
+          - db
+        networks:
+          - user_manager_network
+
+    volumes:
+      postgres_data:
+      postgres_test_data:
+
+    networks:
+      user_manager_network:
+        driver: bridge
